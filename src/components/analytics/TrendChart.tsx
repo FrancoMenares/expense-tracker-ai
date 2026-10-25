@@ -78,16 +78,16 @@ export default function TrendChart({ data, monthlyAverage }: TrendChartProps) {
               ))}
             </div>
 
-            <div className="relative min-w-0 flex-1">
+            <div className="relative min-w-0 flex-1 pr-14">
               {/* Gridlines */}
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-56" aria-hidden="true">
+              <div className="pointer-events-none absolute inset-x-0 right-14 top-0 h-56" aria-hidden="true">
                 {[0, 50].map((top) => (
                   <div key={top} className="absolute inset-x-0 h-px bg-slate-100" style={{ top: `${top}%` }} />
                 ))}
                 <div className="absolute inset-x-0 bottom-0 h-px bg-slate-300" />
                 {monthlyAverage > 0 && (
                   <div className="absolute inset-x-0 h-px bg-slate-400" style={{ bottom: `${(monthlyAverage / max) * 100}%` }}>
-                    <span className="absolute -top-4 right-0 bg-white/90 px-1 text-[11px] font-medium text-slate-500">
+                    <span className="absolute left-full top-0 ml-1.5 -translate-y-1/2 whitespace-nowrap text-[11px] font-medium leading-none text-slate-500">
                       Avg {formatCompactCurrency(monthlyAverage)}
                     </span>
                   </div>
