@@ -7,6 +7,7 @@ import EmptyState from '@/components/EmptyState';
 import ExpenseList from '@/components/ExpenseList';
 import MonthlyChart from '@/components/MonthlyChart';
 import SummaryCards from '@/components/SummaryCards';
+import { TrendUpIcon } from '@/components/icons';
 import { Card, ErrorBanner, PageHeader, Skeleton } from '@/components/ui';
 import { useExpenses } from '@/context/ExpensesContext';
 import { getMonthlyTotals, getSummary, sortExpenses } from '@/lib/analytics';
@@ -20,7 +21,16 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Dashboard" subtitle="An overview of your spending." />
+      <PageHeader
+        title="Dashboard"
+        subtitle="An overview of your spending."
+        actions={
+          <Link href="/analytics" className="btn-secondary">
+            <TrendUpIcon className="h-4 w-4" />
+            View analytics
+          </Link>
+        }
+      />
 
       {loadError && <ErrorBanner message={loadError} />}
 
