@@ -6,10 +6,12 @@ import CategoryChart from '@/components/CategoryChart';
 import EmptyState from '@/components/EmptyState';
 import ExpenseList from '@/components/ExpenseList';
 import MonthlyChart from '@/components/MonthlyChart';
+import { DownloadIcon } from '@/components/icons';
 import SummaryCards from '@/components/SummaryCards';
 import { Card, ErrorBanner, PageHeader, Skeleton } from '@/components/ui';
 import { useExpenses } from '@/context/ExpensesContext';
 import { getMonthlyTotals, getSummary, sortExpenses } from '@/lib/analytics';
+import { downloadCsv } from '@/lib/csv';
 
 export default function DashboardPage() {
   const { expenses, isLoading, loadError } = useExpenses();
@@ -20,7 +22,16 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Dashboard" subtitle="An overview of your spending." />
+      <PageHeader
+        title="Dashboard"
+        subtitle="An overview of your spending."
+        actions={
+          <button onClick={() => downloadCsv(expenses)} disabled={expenses.length === 0} className="btn-secondary">
+            <DownloadIcon className="h-4 w-4" />
+            Export Data
+          </button>
+        }
+      />
 
       {loadError && <ErrorBanner message={loadError} />}
 
