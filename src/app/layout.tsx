@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import ActivityTray from '@/components/cloud/ActivityTray';
 import Navbar from '@/components/Navbar';
 import Providers from '@/components/Providers';
 import './globals.css';
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <Navbar />
           <main className="mx-auto max-w-6xl px-4 pb-28 pt-6 sm:px-6 sm:pb-12 sm:pt-10">{children}</main>
+          <ActivityTray />
         </Providers>
       </body>
     </html>

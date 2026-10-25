@@ -21,7 +21,8 @@ export default function Modal({ open, onClose, title, description, children, siz
     if (!open) return;
     const previouslyFocused = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCloseRef.current();
+      // A nested dialog (e.g. a connect screen opened from this modal) handles its own Escape.
+      if (e.key === 'Escape' && !document.querySelector('[data-nested-dialog]')) onCloseRef.current();
     };
     document.addEventListener('keydown', onKey);
     const overflow = document.body.style.overflow;
