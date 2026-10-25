@@ -4,31 +4,22 @@ import { useMemo, useState } from 'react';
 import EmptyState from '@/components/EmptyState';
 import ExpenseFiltersBar from '@/components/ExpenseFiltersBar';
 import ExpenseList from '@/components/ExpenseList';
+import ExportDialog from '@/components/export/ExportDialog';
 import { DownloadIcon, SearchIcon } from '@/components/icons';
 import { Card, ErrorBanner, PageHeader, Skeleton } from '@/components/ui';
 import { useExpenses } from '@/context/ExpensesContext';
-import { useToast } from '@/context/ToastContext';
 import { filterExpenses } from '@/lib/analytics';
-import { downloadCsv } from '@/lib/csv';
 import { formatCurrency, sumAmounts } from '@/lib/format';
 import { DEFAULT_FILTERS, type ExpenseFilters } from '@/lib/types';
 
 export default function ExpensesPage() {
   const { expenses, isLoading, loadError } = useExpenses();
-  const { showToast } = useToast();
+  const [exportOpen, setExportOpen] = useState(false);
   const [filters, setFilters] = useState<ExpenseFilters>(DEFAULT_FILTERS);
 
   const filtered = useMemo(() => filterExpenses(expenses, filters), [expenses, filters]);
   const filteredTotal = useMemo(() => sumAmounts(filtered.map((e) => e.amount)), [filtered]);
-
-  const handleExport = () => {
-    try {
-      downloadCsv(filtered);
-      showToast(`Exported ${filtered.length} ${filtered.length === 1 ? 'expense' : 'expenses'} to CSV`);
-    } catch {
-      showToast('Export failed. Please try again.', 'error');
-    }
-  };
+  const hasActiveFilters = Boolean(filters.search.trim() || filters.category !== 'All' || filters.startDate || filters.endDate);
 
   return (
     <div className="space-y-6">
@@ -36,10 +27,23 @@ export default function ExpensesPage() {
         title="Expenses"
         subtitle="Search, filter, edit and export your expenses."
         actions={
-          <button onClick={handleExport} disabled={filtered.length === 0} className="btn-secondary">
+          <button onClick={() => setExportOpen(true)} disabled={expenses.length === 0} className="btn-secondary">
             <DownloadIcon className="h-4 w-4" />
-            Export CSV
+            Export
           </button>
+        }
+      />
+      <ExportDialog
+        open={exportOpen}
+        onClose={() => setExportOpen(false)}
+        initial={{
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          categories: filters.category === 'All' ? undefined : [filters.category],
+          search: filters.search,
+        }}
+        notice={
+          hasActiveFilters ? 'Filters from the Expenses page were carried over. Adjust them below if needed.' : undefined
         }
       />
 

@@ -13,6 +13,7 @@ interface Toast {
 
 interface ToastContextValue {
   showToast: (message: string, type?: ToastType) => void;
+  dismissAll: () => void;
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null);
@@ -40,7 +41,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     [dismiss],
   );
 
-  const value = useMemo(() => ({ showToast }), [showToast]);
+  const dismissAll = useCallback(() => setToasts([]), []);
+
+  const value = useMemo(() => ({ showToast, dismissAll }), [showToast, dismissAll]);
 
   return (
     <ToastContext.Provider value={value}>
