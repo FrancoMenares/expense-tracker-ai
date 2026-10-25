@@ -40,9 +40,13 @@ export default function AnalyticsPage() {
               label="Total spent"
               value={formatCurrency(stats.total)}
               footer={
-                <>
-                  <SpendingDelta change={stats.change} /> vs {formatCurrency(stats.previous)} before
-                </>
+                stats.previous > 0 ? (
+                  <>
+                    <SpendingDelta change={stats.change} /> vs {formatCurrency(stats.previous)} before
+                  </>
+                ) : (
+                  'Nothing recorded in the span before'
+                )
               }
             />
             <StatTile label="Monthly average" value={formatCurrency(stats.monthlyAverage)} footer={`Over ${months} months`} />
