@@ -9,10 +9,14 @@ interface ModalProps {
   title: string;
   description?: string;
   children: ReactNode;
-  size?: 'sm' | 'md';
+  /** Pinned below the scrollable body, e.g. for primary actions. */
+  footer?: ReactNode;
+  size?: 'sm' | 'md' | 'xl';
 }
 
-export default function Modal({ open, onClose, title, description, children, size = 'md' }: ModalProps) {
+const SIZE_CLASSES = { sm: 'sm:max-w-md', md: 'sm:max-w-lg', xl: 'sm:max-w-5xl' } as const;
+
+export default function Modal({ open, onClose, title, description, children, footer, size = 'md' }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
@@ -49,9 +53,7 @@ export default function Modal({ open, onClose, title, description, children, siz
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className={`relative max-h-[92vh] w-full animate-slide-up overflow-y-auto rounded-t-2xl bg-white shadow-xl sm:rounded-2xl ${
-          size === 'sm' ? 'sm:max-w-md' : 'sm:max-w-lg'
-        }`}
+        className={`relative flex max-h-[92vh] w-full animate-slide-up flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl sm:rounded-2xl ${SIZE_CLASSES[size]}`}
       >
         <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-4">
           <div>
@@ -68,7 +70,8 @@ export default function Modal({ open, onClose, title, description, children, siz
             <XIcon className="h-5 w-5" />
           </button>
         </div>
-        <div className="px-6 py-5">{children}</div>
+        <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+        {footer && <div className="border-t border-slate-100 bg-slate-50/80 px-6 py-4">{footer}</div>}
       </div>
     </div>
   );

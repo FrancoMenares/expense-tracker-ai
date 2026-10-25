@@ -1,18 +1,21 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import CategoryChart from '@/components/CategoryChart';
 import EmptyState from '@/components/EmptyState';
 import ExpenseList from '@/components/ExpenseList';
 import MonthlyChart from '@/components/MonthlyChart';
 import SummaryCards from '@/components/SummaryCards';
+import ExportDialog from '@/components/export/ExportDialog';
+import { DownloadIcon, TrendUpIcon } from '@/components/icons';
 import { Card, ErrorBanner, PageHeader, Skeleton } from '@/components/ui';
 import { useExpenses } from '@/context/ExpensesContext';
 import { getMonthlyTotals, getSummary, sortExpenses } from '@/lib/analytics';
 
 export default function DashboardPage() {
   const { expenses, isLoading, loadError } = useExpenses();
+  const [exportOpen, setExportOpen] = useState(false);
 
   const summary = useMemo(() => getSummary(expenses), [expenses]);
   const monthly = useMemo(() => getMonthlyTotals(expenses), [expenses]);
@@ -20,7 +23,23 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Dashboard" subtitle="An overview of your spending." />
+      <PageHeader
+        title="Dashboard"
+        subtitle="An overview of your spending."
+        actions={
+          <>
+            <Link href="/analytics" className="btn-secondary">
+              <TrendUpIcon className="h-4 w-4" />
+              View analytics
+            </Link>
+            <button onClick={() => setExportOpen(true)} disabled={isLoading || expenses.length === 0} className="btn-secondary">
+              <DownloadIcon className="h-4 w-4" />
+              Export data
+            </button>
+          </>
+        }
+      />
+      <ExportDialog open={exportOpen} onClose={() => setExportOpen(false)} />
 
       {loadError && <ErrorBanner message={loadError} />}
 
