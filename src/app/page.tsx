@@ -8,7 +8,7 @@ import ExpenseList from '@/components/ExpenseList';
 import MonthlyChart from '@/components/MonthlyChart';
 import SummaryCards from '@/components/SummaryCards';
 import ExportDialog from '@/components/export/ExportDialog';
-import { DownloadIcon } from '@/components/icons';
+import { DownloadIcon, TrendUpIcon } from '@/components/icons';
 import { Card, ErrorBanner, PageHeader, Skeleton } from '@/components/ui';
 import { useExpenses } from '@/context/ExpensesContext';
 import { getMonthlyTotals, getSummary, sortExpenses } from '@/lib/analytics';
@@ -27,10 +27,16 @@ export default function DashboardPage() {
         title="Dashboard"
         subtitle="An overview of your spending."
         actions={
-          <button onClick={() => setExportOpen(true)} disabled={isLoading || expenses.length === 0} className="btn-secondary">
-            <DownloadIcon className="h-4 w-4" />
-            Export data
-          </button>
+          <>
+            <Link href="/analytics" className="btn-secondary">
+              <TrendUpIcon className="h-4 w-4" />
+              View analytics
+            </Link>
+            <button onClick={() => setExportOpen(true)} disabled={isLoading || expenses.length === 0} className="btn-secondary">
+              <DownloadIcon className="h-4 w-4" />
+              Export data
+            </button>
+          </>
         }
       />
       <ExportDialog open={exportOpen} onClose={() => setExportOpen(false)} />

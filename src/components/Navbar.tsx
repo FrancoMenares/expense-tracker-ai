@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useExpenseActions } from '@/context/ExpenseActionsContext';
-import { ChartIcon, ListIcon, PlusIcon, WalletIcon } from './icons';
+import { ChartIcon, ListIcon, PlusIcon, TrendUpIcon, WalletIcon } from './icons';
 
 const LINKS = [
   { href: '/', label: 'Dashboard', icon: ChartIcon },
   { href: '/expenses', label: 'Expenses', icon: ListIcon },
+  { href: '/analytics', label: 'Analytics', icon: TrendUpIcon },
 ];
 
 export default function Navbar() {
@@ -53,7 +54,7 @@ export default function Navbar() {
 
       {/* Mobile bottom navigation */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur sm:hidden">
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-3">
           {LINKS.map(({ href, label, icon: Icon }) => {
             const active = pathname === href;
             return (
