@@ -1,4 +1,4 @@
-import { formatMonthKey, monthKey, sumAmounts, toISODate } from './format';
+import { formatMonthKey, monthKey, sumAmounts, toCents, toISODate } from './format';
 import { CATEGORIES, type Category, type Expense, type ExpenseFilters } from './types';
 
 export interface CategoryTotal {
@@ -97,4 +97,37 @@ export function sortExpenses(expenses: Expense[], sort: ExpenseFilters['sort'] =
     }
   });
   return sorted;
+}
+
+export interface BudgetStreak {
+  days: number;
+  dailyBudget: number;
+  /** The next streak length worth celebrating. */
+  nextMilestone: number;
+}
+
+const STREAK_MILESTONES = [7, 14, 30, 60, 90, 180, 365];
+
+/**
+ * Counts consecutive days, ending today, on which total spending stayed within `dailyBudget`.
+ * Days before the first recorded expense don't count, so a brand-new user starts at zero.
+ */
+export function getBudgetStreak(expenses: Expense[], dailyBudget: number, now = new Date()): BudgetStreak {
+  const byDay = new Map<string, number>();
+  for (const e of expenses) byDay.set(e.date, (byDay.get(e.date) ?? 0) + toCents(e.amount));
+  const firstDay = expenses.reduce<string | null>((min, e) => (min === null || e.date < min ? e.date : min), null);
+  const budgetCents = toCents(dailyBudget);
+
+  let days = 0;
+  if (firstDay) {
+    const cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    for (let date = toISODate(cursor); date >= firstDay; date = toISODate(cursor)) {
+      if ((byDay.get(date) ?? 0) > budgetCents) break;
+      days++;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+  }
+
+  const nextMilestone = STREAK_MILESTONES.find((m) => m > days) ?? Math.ceil((days + 1) / 365) * 365;
+  return { days, dailyBudget, nextMilestone };
 }
